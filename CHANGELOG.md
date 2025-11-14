@@ -2,16 +2,31 @@
 
 This file records all important changes for Hoag React App.
 
-## [0.0.1] Continue from the previous version [Do not add a date]
+## [0.0.2]
 
 ### Changed
-- package.json のバージョンを 0.0.1 に設定し、README にローカル起動手順を追記して面談準備のフローを明確化しました。
+- Added `run-dev.sh` at the repository root so it automatically `cd`s into `frontend/`, launches the Vite dev server, and handles the Ctrl+C auto-restart logic.
+- Created a root-level README.md describing how to run `./run-dev.sh`, what happens on the first and second Ctrl+C, and how the script returns to the root directory afterward.
 
 ### Added
-- frontend ディレクトリに Vite + React + TypeScript の最小構成を生成し、npm install / npm run build で動作確認済みの状態にしました。
+- Documented the completed dev-script work in `tasks.md`, clarifying the Developer Experience roadmap.
 
 ### Fixed
-- 該当なし。
+- Updated `frontend/package.json` and `package-lock.json` to version 0.0.2 so they match this changelog entry.
+
+### Prompts Used
+<prompt>make script on root to run the dev once it's closed with Ctrl+C, make sure to come back to root if the script moved to frontend folder</prompt>
+
+## [0.0.1]
+
+### Changed
+- Set `package.json` to version 0.0.1 and expanded the frontend README with local startup steps to make interview prep straightforward.
+
+### Added
+- Scaffolded the `frontend` directory with the Vite + React + TypeScript template and verified it with `npm install` and `npm run build`.
+
+### Fixed
+- None.
 
 ### Prompts Used
 <prompt>ok make it ready to run as well y</prompt>

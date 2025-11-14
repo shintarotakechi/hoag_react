@@ -15,6 +15,15 @@ This file tracks project tasks, completed work, and future work needed.
   - Installed dependencies and documented `npm install` / `npm run dev` workflow so setup is reproducible
   - Ran `npm run build` to ensure the starter compiles before the interview begins
 
+- [x] Dev run helper script
+  - Added `run-dev.sh` at the repo root to `cd` into `frontend`, ensure dependencies exist, and run the Vite dev server
+  - Implemented single automatic restart after the first `Ctrl+C` so accidental interrupts do not require manual restarts
+  - Documented usage in the new root `README.md` so interview prep instructions live alongside the script
+
+- [x] CHANGELOG English alignment
+  - Reworded all entries for versions 0.0.1 and 0.0.2 in English per the updated expectation
+  - Confirmed future changelog updates will follow the same language standard
+
 ## Future Tasks
 
 ### Initial Setup
@@ -85,7 +94,7 @@ This file tracks project tasks, completed work, and future work needed.
 ### Developer Experience
 - [ ] Development script creation
   - [ ] setup.sh: Initial setup
-  - [ ] dev.sh: Development environment startup
+  - [x] dev helper for frontend hot reload workflow (`run-dev.sh`)
   - [ ] Database seed script
 - [ ] Environment variable management
   - [ ] Create .env.example
