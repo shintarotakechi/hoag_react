@@ -2,6 +2,20 @@
 
 This file records all important changes for Hoag React App.
 
+## [0.0.3]
+
+### Changed
+- Wrapped the browser console pipeline via `src/devLogger.ts` and `src/main.tsx` so every dev-mode log/error funnels toward the Vite server with runtime validation and configurable payload limits.
+
+### Added
+- Registered a dev-only middleware in `frontend/vite.config.ts` that validates JSON log posts and appends formatted entries to repo-root `system.log`, plus README instructions for tailing and tuning the logger.
+
+### Fixed
+- Ignored `system.log` in Git and bumped the frontend package metadata to 0.0.3 so all governance files stay aligned.
+
+### Prompts Used
+<prompt>can you make it so that whatever we do and implement would come out to the log file? system.log or something so that we don't have to check the console.log from browser, nor have to copy and paste the error from system.</prompt>
+
 ## [0.0.2]
 
 ### Changed

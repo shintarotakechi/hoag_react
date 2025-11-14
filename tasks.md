@@ -24,6 +24,12 @@ This file tracks project tasks, completed work, and future work needed.
   - Reworded all entries for versions 0.0.1 and 0.0.2 in English per the updated expectation
   - Confirmed future changelog updates will follow the same language standard
 
+- [x] Dev console mirroring into `system.log`
+  - Authored `frontend/src/devLogger.ts` to wrap console calls + window error events, serialize arguments defensively, and stream them to the dev server with timeout protection.
+  - Bootstrapped the logger from `src/main.tsx`, exposing `configureDevLogger` so future tweaks (levels, payload size) don’t require touching the middleware.
+  - Extended `frontend/vite.config.ts` with a dev-only middleware that validates JSON, enforces size caps, and appends normalized lines to repo-root `system.log`.
+  - Documented usage in `README.md`, ignored `system.log` via `.gitignore`, and bumped package versions to keep governance files in lockstep.
+
 ## Future Tasks
 
 ### Initial Setup
@@ -96,6 +102,9 @@ This file tracks project tasks, completed work, and future work needed.
   - [ ] setup.sh: Initial setup
   - [x] dev helper for frontend hot reload workflow (`run-dev.sh`)
   - [ ] Database seed script
+- [ ] Logging hygiene
+  - [ ] system.log truncation/rotation command so the ignored file cannot grow without bound
+  - [ ] Optional CLI to tail/format log entries for interviewers without digging through raw text
 - [ ] Environment variable management
   - [ ] Create .env.example
   - [ ] Document environment variables

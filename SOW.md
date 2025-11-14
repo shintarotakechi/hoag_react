@@ -1,42 +1,52 @@
 # Statement of Work (SOW)
 
 ## Objective
-Provide a root-level helper script that launches the Vite dev server from `frontend/`, and when the dev process is stopped via Ctrl+C, immediately starts it again (while ensuring the shell returns to the repository root regardless of directory changes).
+Provide a development-only logging workflow that captures browser console activity and critical runtime errors into a repo-root `system.log`, so interviewers do not need to copy logs from the browser console. The solution must stay within the existing Vite + React stack (no new backend services).
 
 ## Scope of Work
-1. **Script Design**
-   - Decide on a portable Bash script name (e.g., `run-dev.sh`) placed at the repo root.
-   - Implement logic to `cd frontend`, run `npm install` guard if node_modules missing, start `npm run dev`, and detect Ctrl+C to trigger exactly one automatic restart before exiting cleanly back at the root.
-2. **Restart & Cleanup Behavior**
-   - Ensure the script captures SIGINT so that the first Ctrl+C stops the running Vite instance and re-launches it once more; a second Ctrl+C should terminate both the child process and wrapper without leaving orphaned processes.
-   - Guarantee the script restores the original working directory even if errors occur.
-3. **Documentation & Governance**
-   - Update `README.md` (root or frontend) with instructions for using the new script.
-   - Increment semantic versioning where applicable and record the change in `CHANGELOG.md` plus `tasks.md` per governance rules.
-4. **Verification**
-   - Execute the script to prove it launches the dev server, handle Ctrl+C to confirm automatic relaunch, and document the observed behavior.
+1. **Dev Logging Pipeline Design**
+   - Implement a client-side logging utility that wraps `console` methods during development, enriches entries with timestamps, log levels, and stack metadata, and POSTs them to the dev server only when `import.meta.env.DEV` is true.
+   - Guard against null/undefined payloads, large objects, and serialization errors by performing runtime validation before sending.
+
+2. **Vite Middleware for File Logging**
+   - Build a custom Vite plugin that registers a middleware (e.g., `POST /__system-log`) via `configureServer`.
+   - Ensure the middleware validates incoming payloads, appends formatted lines to `system.log` at the repo root, and rotates/creates the file if missing.
+   - Include defensive logging for failures and terminate requests with descriptive HTTP errors when validation fails.
+
+3. **Configuration & Developer Experience**y
+   - Expose light configuration (log level toggles, max payload size) via a small module so future interview tasks can adjust behavior without touching the middleware.
+   - Make sure production builds tree-shake out the logging shim to avoid shipping unnecessary network calls.
+
+4. **Documentation & Governance**
+   - Update `README.md` with instructions on tailing `system.log`, explaining the dev-only nature, and noting how to disable/adjust the logger.
+   - Increment the project version (patch) and record the work in `CHANGELOG.md` plus `tasks.md`, capturing the original prompting context per governance rules.
+
+5. **Verification**
+   - Run `npm run dev` (via `run-dev.sh`) to confirm: console calls produce entries in `system.log`, malformed payloads are rejected with clear errors, and disabling the logger in production mode stops file writes.
 
 ## Out of Scope
-- Modifying the underlying Vite configuration or application code.
-- Introducing cross-platform wrappers beyond Bash (PowerShell/batch support not required yet).
-- Managing backend services or Docker resources.
+- Introducing separate backend frameworks (Express/Fastify) or hosted logging services.
+- Implementing advanced log rotation, compression, or multi-user authentication for the log endpoint.
+- Instrumenting application-level analytics beyond console/error logging.
 
 ## Deliverables
-- Root-level Bash script implementing the described restart behavior.
-- Updated documentation explaining how to use the script before the interview.
-- Updated `CHANGELOG.md` and `tasks.md` capturing work performed, plus any version bumps (e.g., `frontend/package.json`).
-- Verification notes describing the restart sequence outcome.
+- `system.log` file creation logic plus the custom Vite middleware plugin.
+- Client logging utility integrated with the React app (or a development bootstrap file).
+- Updated documentation, changelog, and task tracking with synchronized version numbers.
+- Verification notes describing how the log file behaves during dev sessions.
 
 ## Assumptions & Dependencies
-- Bash environment available (WSL/macOS/Linux assumed for the interview setup).
-- Node.js/npm already installed so `npm run dev` works as before.
-- Only one automatic restart is requested after the initial Ctrl+C.
+- Workflows run through `npm run dev` or `./run-dev.sh`, ensuring the middleware is active.
+- Node.js filesystem access is available wherever the dev server runs (WSL/macOS/Linux).
+- Developers tail `system.log` directly; no UI viewer is required yet.
 
 ## Risks
-- Improper signal handling could leave zombie Vite processes; mitigated by explicit trap/cleanup.
-- Looping behavior might be interpreted differently; behavior limited to “restart once” to match the request and avoid infinite loops.
+- Excessive logging could bloat `system.log`; mitigated by enforcing payload size limits and log levels.
+- Network failures between browser and dev server could drop log entries; mitigated with retry/backoff or at least console warnings when POST requests fail.
+- If validation is too strict, legitimate logs may be rejected; scope includes clear error messaging for quick debugging.
 
 ## Acceptance Criteria
-- User explicitly approves this SOW with "y".
-- Running the script from repo root launches Vite, restarts once automatically after Ctrl+C, and returns to root when finished.
-- Documentation and governance files updated with matching version numbers.
+- User explicitly approves this SOW with “y”.
+- Running the dev server results in browser console messages appearing in `system.log` with timestamps and levels.
+- No logging code executes in production builds.
+- Documentation and governance files reflect the new capability and version number.
