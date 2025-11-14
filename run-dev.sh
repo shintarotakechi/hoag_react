@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FRONTEND_DIR="$ROOT_DIR/frontend"
-MAX_AUTORESTARTS=1
+MAX_AUTORESTARTS=0
 restart_count=0
 
 if [[ ! -d "$FRONTEND_DIR" ]]; then
